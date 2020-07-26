@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-import argparse
 import contextlib
 import pathlib
 import threading
 import time
 
+import configargparse
 import gi
 import mpd
 
@@ -106,17 +106,20 @@ def app_main(mpd_host, mpd_port, library):
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = configargparse.ArgumentParser(
+        default_config_files=['~/.config/mpd-art-box/config'])
+    parser.add_argument('-c', '--config', is_config_file=True,
+                        help='config path')
     parser.add_argument('--host', default='localhost',
                         help='MPD host (default: %(default)s)')
     parser.add_argument('--port', type=int, default=6600,
                         help='MPD port (default: %(default)s)')
-    parser.add_argument('library', type=pathlib.Path,
+    parser.add_argument('--library', type=pathlib.Path, required=True,
                         help='root path of the MPD library')
     parser.add_argument('--version', action='version', version=version)
     args = parser.parse_args()
 
-    app_main(args.host, args.port, args.library)
+    app_main(args.host, args.port, args.library.expanduser())
     Gtk.main()
 
 
