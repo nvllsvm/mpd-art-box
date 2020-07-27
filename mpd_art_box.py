@@ -42,7 +42,7 @@ def _find_song_art(library, song_path):
 
 def app_main(mpd_host, mpd_port, library):
     win = Gtk.Window(default_height=500, default_width=500)
-    win.connect("destroy", Gtk.main_quit)
+    win.connect('destroy', Gtk.main_quit)
 
     win.override_background_color(
         Gtk.StateType.NORMAL, Gdk.RGBA(red=0, green=0, blue=0))
@@ -96,7 +96,7 @@ def app_main(mpd_host, mpd_port, library):
     def _on_resize(*args):
         set_image()
 
-    win.connect("size-allocate", _on_resize)
+    win.connect('size-allocate', _on_resize)
 
     thread = threading.Thread(target=mpd_loop)
     thread.daemon = True
@@ -121,5 +121,5 @@ def main():
     Gtk.main()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
