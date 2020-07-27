@@ -47,10 +47,8 @@ def app_main(mpd_host, mpd_port, library):
     win.override_background_color(
         Gtk.StateType.NORMAL, Gdk.RGBA(red=0, green=0, blue=0))
 
-    vbox = Gtk.VBox()
-    win.add(vbox)
     image = Gtk.Image()
-    vbox.add(image)
+    win.add(image)
     image_path = None
 
     def set_image():
