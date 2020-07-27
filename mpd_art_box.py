@@ -52,30 +52,31 @@ def app_main(mpd_host, mpd_port, library):
     image_path = None
 
     def set_image():
-        if image_path is None:
-            image.clear()
-            return False
+        nonlocal image_path
 
-        win_width, win_height = win.get_size()
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
-        aspect = (pixbuf.get_width() / pixbuf.get_height())
+        if image_path:
+            win_width, win_height = win.get_size()
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+            aspect = (pixbuf.get_width() / pixbuf.get_height())
 
-        if aspect < 1:
-            height = win_height
-            width = aspect * height
-            if width > win_width:
-                height = (win_width / width) * height
-                width = win_width
-        else:
-            width = win_width
-            height = (1 / aspect) * width
-            if height > win_height:
-                width = (win_height / height) * width
+            if aspect < 1:
                 height = win_height
+                width = aspect * height
+                if width > win_width:
+                    height = (win_width / width) * height
+                    width = win_width
+            else:
+                width = win_width
+                height = (1 / aspect) * width
+                if height > win_height:
+                    width = (win_height / height) * width
+                    height = win_height
 
-        pixbuf = pixbuf.scale_simple(
-            width, height, GdkPixbuf.InterpType.BILINEAR)
-        image.set_from_pixbuf(pixbuf)
+            pixbuf = pixbuf.scale_simple(
+                width, height, GdkPixbuf.InterpType.BILINEAR)
+            image.set_from_pixbuf(pixbuf)
+        else:
+            image.clear()
         return False
 
     def mpd_loop():
