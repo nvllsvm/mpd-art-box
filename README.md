@@ -8,3 +8,5 @@ A window displaying the cover for the currently playing MPD track - nothing more
 ```
 pip install mpd-art-box
 ```
+
+Also available in the [Arch Linux AUR](https://aur.archlinux.org/packages/mpd-art-box/)
