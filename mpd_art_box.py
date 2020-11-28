@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import contextlib
-import pathlib
 import threading
 import time
 
@@ -10,7 +9,7 @@ import mpd
 
 gi.require_version('Gtk', '3.0')
 
-from gi.repository import GLib, Gtk, Gdk, GdkPixbuf  # noqa: E402
+from gi.repository import Gio, GLib, Gtk, Gdk, GdkPixbuf  # noqa: E402
 
 version = '0.0.3'
 
@@ -34,13 +33,7 @@ def _mpd_client(*args, **kwargs):
         client.disconnect()
 
 
-def _find_song_art(library, song_path):
-    for path in library.joinpath(song_path).parent.iterdir():
-        if path.name in ('cover.jpg', 'cover.png'):
-            return path
-
-
-def app_main(mpd_host, mpd_port, library):
+def app_main(mpd_host, mpd_port):
     win = Gtk.Window(default_height=500, default_width=500)
     win.connect('destroy', Gtk.main_quit)
 
@@ -49,14 +42,17 @@ def app_main(mpd_host, mpd_port, library):
 
     image = Gtk.Image()
     win.add(image)
-    image_path = None
+    image_bytes = None
 
     def set_image():
-        nonlocal image_path
+        nonlocal image_bytes
 
-        if image_path:
+        if image_bytes:
             win_width, win_height = win.get_size()
-            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(image_path))
+            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
+                Gio.MemoryInputStream.new_from_bytes(
+                    GLib.Bytes.new(image_bytes)
+                ), None)
             aspect = (pixbuf.get_width() / pixbuf.get_height())
 
             if aspect < 1:
@@ -80,15 +76,15 @@ def app_main(mpd_host, mpd_port, library):
         return False
 
     def mpd_loop():
-        nonlocal image_path
+        nonlocal image_bytes
 
         with _mpd_client(mpd_host, mpd_port) as client:
             while True:
                 current = client.currentsong()
                 if not current:
-                    image_path = None
+                    image_bytes = None
                 else:
-                    image_path = _find_song_art(library, current['file'])
+                    image_bytes = client.albumart(current['file'])
                 GLib.idle_add(set_image)
                 client.idle()
 
@@ -113,12 +109,10 @@ def main():
                         help='MPD host (default: %(default)s)')
     parser.add_argument('--port', type=int, default=6600,
                         help='MPD port (default: %(default)s)')
-    parser.add_argument('--library', type=pathlib.Path, required=True,
-                        help='root path of the MPD library')
     parser.add_argument('--version', action='version', version=version)
     args = parser.parse_args()
 
-    app_main(args.host, args.port, args.library.expanduser())
+    app_main(args.host, args.port)
     Gtk.main()
 
 
