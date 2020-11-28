@@ -41,18 +41,14 @@ def app_main(mpd_host, mpd_port):
         Gtk.StateType.NORMAL, Gdk.RGBA(red=0, green=0, blue=0))
 
     image = Gtk.Image()
+    pixbuf = None
     win.add(image)
-    image_bytes = None
 
     def set_image():
-        nonlocal image_bytes
+        nonlocal pixbuf
 
-        if image_bytes:
+        if pixbuf:
             win_width, win_height = win.get_size()
-            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
-                Gio.MemoryInputStream.new_from_bytes(
-                    GLib.Bytes.new(image_bytes)
-                ), None)
             aspect = (pixbuf.get_width() / pixbuf.get_height())
 
             if aspect < 1:
@@ -76,15 +72,19 @@ def app_main(mpd_host, mpd_port):
         return False
 
     def mpd_loop():
-        nonlocal image_bytes
+        nonlocal pixbuf
 
         with _mpd_client(mpd_host, mpd_port) as client:
             while True:
                 current = client.currentsong()
                 if not current:
-                    image_bytes = None
+                    pixbuf = None
                 else:
                     image_bytes = client.albumart(current['file'])
+                    pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
+                        Gio.MemoryInputStream.new_from_bytes(
+                            GLib.Bytes.new(image_bytes)
+                        ), None)
                 GLib.idle_add(set_image)
                 client.idle()
 
