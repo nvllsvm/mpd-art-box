@@ -1,4 +1,6 @@
 # Changelog
+## 0.0.5 (2020-12-04)
+- Default to using mpd socket (`$XDG_RUNTIME_DIR/mpd/socket`) before using localhost
 
 ## 0.0.4 (2020-11-28)
 - Use mpd to retrieve album art
