@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import contextlib
+import os
+import pathlib
 import threading
 import time
 
@@ -103,16 +105,29 @@ def app_main(mpd_host, mpd_port):
 def main():
     parser = configargparse.ArgumentParser(
         default_config_files=['~/.config/mpd-art-box/config'])
-    parser.add_argument('-c', '--config', is_config_file=True,
-                        help='config path')
-    parser.add_argument('--host', default='localhost',
-                        help='MPD host (default: %(default)s)')
-    parser.add_argument('--port', type=int, default=6600,
-                        help='MPD port (default: %(default)s)')
+    parser.add_argument(
+        '-c', '--config', is_config_file=True,
+        help='config path')
+    parser.add_argument(
+        '--host',
+        help='MPD host (default: $XDG_RUNTIME_DIR/mpd/socket or localhost)')
+    parser.add_argument(
+        '--port', type=int, default=6600,
+        help='MPD port (default: %(default)s)')
     parser.add_argument('--version', action='version', version=version)
     args = parser.parse_args()
 
-    app_main(args.host, args.port)
+    mpd_host = args.host
+    if mpd_host is None:
+        runtime_dir = os.environ['XDG_RUNTIME_DIR']
+        if runtime_dir:
+            socket = pathlib.Path(runtime_dir) / 'mpd' / 'socket'
+            if socket.exists():
+                mpd_host = str(socket)
+    if mpd_host is None:
+        mpd_host = 'localhost'
+
+    app_main(mpd_host, args.port)
     Gtk.main()
 
 
