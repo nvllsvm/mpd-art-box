@@ -82,7 +82,7 @@ def app_main(mpd_host, mpd_port):
                 if not current:
                     pixbuf = None
                 else:
-                    image_bytes = client.albumart(current['file'])
+                    image_bytes = client.albumart(current['file'])['binary']
                     pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
                         Gio.MemoryInputStream.new_from_bytes(
                             GLib.Bytes.new(image_bytes)
