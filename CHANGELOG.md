@@ -1,4 +1,8 @@
 # Changelog
+## 0.0.6 (2021-02-01)
+- Fix compatibility with python-mpd2
+- Require python-mpd2>=3
+
 ## 0.0.5 (2020-12-04)
 - Default to using mpd socket (`$XDG_RUNTIME_DIR/mpd/socket`) before using localhost
 
