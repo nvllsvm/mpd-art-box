@@ -1,4 +1,8 @@
 # Changelog
+## 0.0.7 (2021-04-19)
+- Fix window resizing
+- Avoid unnecessecary updates upon window resize
+
 ## 0.0.6 (2021-02-01)
 - Fix compatibility with python-mpd2
 - Require python-mpd2>=3
