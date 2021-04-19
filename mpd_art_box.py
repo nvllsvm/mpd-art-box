@@ -86,11 +86,16 @@ def app_main(mpd_host, mpd_port):
                 if not current:
                     pixbuf = None
                 else:
-                    image_bytes = client.albumart(current['file'])['binary']
-                    pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
-                        Gio.MemoryInputStream.new_from_bytes(
-                            GLib.Bytes.new(image_bytes)
-                        ), None)
+                    try:
+                        image_bytes = client.albumart(
+                            current['file'])['binary']
+                    except mpd.CommandError:
+                        pixbuf = None
+                    else:
+                        pixbuf = GdkPixbuf.Pixbuf.new_from_stream(
+                            Gio.MemoryInputStream.new_from_bytes(
+                                GLib.Bytes.new(image_bytes)
+                            ), None)
                 GLib.idle_add(set_image)
                 client.idle()
 
