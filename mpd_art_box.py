@@ -44,13 +44,17 @@ def app_main(mpd_host, mpd_port):
 
     image = Gtk.Image()
     pixbuf = None
+    win_size = None
     win.add(image)
 
     def set_image():
         nonlocal pixbuf
+        nonlocal win_size
 
         if pixbuf:
-            win_width, win_height = win.get_size()
+            win_size = win.get_size()
+            win_width, win_height = win_size
+
             aspect = (pixbuf.get_width() / pixbuf.get_height())
 
             if aspect < 1:
@@ -93,7 +97,8 @@ def app_main(mpd_host, mpd_port):
     win.show_all()
 
     def _on_resize(*args):
-        set_image()
+        if win.get_size() != win_size:
+            set_image()
 
     win.connect('size-allocate', _on_resize)
 
