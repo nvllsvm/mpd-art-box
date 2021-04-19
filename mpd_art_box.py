@@ -66,9 +66,9 @@ def app_main(mpd_host, mpd_port):
                     width = (win_height / height) * width
                     height = win_height
 
-            pixbuf = pixbuf.scale_simple(
-                width, height, GdkPixbuf.InterpType.BILINEAR)
-            image.set_from_pixbuf(pixbuf)
+            image.set_from_pixbuf(
+                pixbuf.scale_simple(
+                    width, height, GdkPixbuf.InterpType.BILINEAR))
         else:
             image.clear()
         return False
