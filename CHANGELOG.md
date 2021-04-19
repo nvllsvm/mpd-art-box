@@ -1,4 +1,7 @@
 # Changelog
+## 0.0.8 (2021-04-19)
+- Fix tracks lacking album art
+
 ## 0.0.7 (2021-04-19)
 - Fix window resizing
 - Avoid unnecessecary updates upon window resize
