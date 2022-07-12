@@ -15,6 +15,8 @@ from gi.repository import Gio, GLib, Gtk, Gdk, GdkPixbuf  # noqa: E402
 
 version = '0.0.8'
 
+CSS = b'* { background-color: #000; }'
+
 
 @contextlib.contextmanager
 def _mpd_client(*args, **kwargs):
@@ -36,11 +38,16 @@ def _mpd_client(*args, **kwargs):
 
 
 def app_main(mpd_host, mpd_port):
-    win = Gtk.Window(default_height=500, default_width=500)
-    win.connect('destroy', Gtk.main_quit)
+    css_provider = Gtk.CssProvider()
+    css_provider.load_from_data(CSS)
+    context = Gtk.StyleContext()
+    screen = Gdk.Screen.get_default()
 
-    win.override_background_color(
-        Gtk.StateType.NORMAL, Gdk.RGBA(red=0, green=0, blue=0))
+    context.add_provider_for_screen(screen, css_provider,
+                                    Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+    win = Gtk.Window(default_height=500, default_width=500)
+
+    win.connect('destroy', Gtk.main_quit)
 
     image = Gtk.Image()
     pixbuf = None
