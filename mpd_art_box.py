@@ -13,7 +13,7 @@ gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gio, GLib, Gtk, Gdk, GdkPixbuf  # noqa: E402
 
-version = '0.0.8'
+version = '0.0.9'
 
 
 @contextlib.contextmanager
